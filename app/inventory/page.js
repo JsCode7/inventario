@@ -11,6 +11,7 @@ export default function InventoryPage() {
   const [stock, setStock] = useState('');
   const [entryDate, setEntryDate] = useState('');
   const [costPerUnit, setCostPerUnit] = useState('');
+  const [category, setCategory] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [editingProduct, setEditingProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,10 +33,11 @@ export default function InventoryPage() {
       body: JSON.stringify({
         productCode,
         productName,
+        category,
         stock,
         entryDate,
         costPerUnit,
-        totalCost
+        totalCost,
       }),
     });
 
@@ -46,6 +48,7 @@ export default function InventoryPage() {
     setStock('');
     setEntryDate('');
     setCostPerUnit('');
+    setCategory('');
   };
 
   const handleDelete = async (productId) => {
@@ -90,7 +93,7 @@ export default function InventoryPage() {
     let rowIndex = 20;
 
     filteredProducts.forEach((product) => {
-      doc.text(`${product.productCode} - ${product.productName} - ${product.stock} - ${new Date(product.entryDate).toLocaleDateString()} - ${product.costPerUnit} - ${product.totalCost}`, 20, rowIndex);
+      doc.text(`${product.productCode} - ${product.productName} - ${product.category} - ${product.stock} - ${new Date(product.entryDate).toLocaleDateString()} - ${product.costPerUnit} - ${product.totalCost}`, 20, rowIndex);
       rowIndex += 10;
     });
 
@@ -100,10 +103,12 @@ export default function InventoryPage() {
   const filteredProducts = products.filter((product) =>
     product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.productCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.category?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.stock?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.costPerUnit?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.totalCost?.toString().toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
@@ -124,6 +129,13 @@ export default function InventoryPage() {
             placeholder="Nombre del Producto"
             className="w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500"
           />
+          <input
+            type="text"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            placeholder="Categoría"
+            className="w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500"
+          /> 
         </div>
         <div className="flex items-center space-x-2">
           <input
@@ -178,6 +190,7 @@ export default function InventoryPage() {
           <tr>
             <th className="py-3 px-4 bg-gray-700 text-left text-gray-300">Código</th>
             <th className="py-3 px-4 bg-gray-700 text-left text-gray-300">Nombre</th>
+            <th className="py-3 px-4 bg-gray-700 text-left text-gray-300">Categoría</th>
             <th className="py-3 px-4 bg-gray-700 text-left text-gray-300">Stock</th>
             <th className="py-3 px-4 bg-gray-700 text-left text-gray-300">Fecha de Ingreso</th>
             <th className="py-3 px-4 bg-gray-700 text-left text-gray-300">Costo por Unidad</th>
@@ -190,6 +203,7 @@ export default function InventoryPage() {
             <tr key={product._id} className="border-b border-gray-700">
               <td className="py-3 px-4 text-gray-300">{product.productCode}</td>
               <td className="py-3 px-4 text-gray-300">{product.productName}</td>
+              <td className="py-3 px-4 text-gray-300">{product.category}</td>
               <td className="py-3 px-4 text-gray-300">{product.stock}</td>
               <td className="py-3 px-4 text-gray-300">{new Date(product.entryDate).toLocaleDateString()}</td>
               <td className="py-3 px-4 text-gray-300">{product.costPerUnit}</td>
@@ -231,6 +245,13 @@ export default function InventoryPage() {
               value={editingProduct?.productName || ''}
               onChange={(e) => setEditingProduct({ ...editingProduct, productName: e.target.value })}
               placeholder="Nombre del Producto"
+              className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg mb-4 focus:outline-none focus:border-blue-500"
+            />
+            <input
+              type="text"
+              value={editingProduct?.category || ''}
+              onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
+              placeholder="Categoría"
               className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg mb-4 focus:outline-none focus:border-blue-500"
             />
             <input
