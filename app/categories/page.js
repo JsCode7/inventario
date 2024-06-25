@@ -107,11 +107,7 @@ export default function CategoriesPage() {
             <tr key={category._id} className="border-b border-gray-700">
               <td className="py-3 px-4 text-gray-300">{category.name}</td>
               <td className="py-3 px-4 text-gray-300">{category.description}</td>
-              <td className="py-3 px-4 text-gray-300">
-                {category.products.map(product => (
-                  <div key={product._id}>{product.productName}</div>
-                ))}
-              </td>
+              
               <td className="py-3 px-4 flex items-center space-x-2">
                 <button
                   onClick={() => handleEdit(category)}

@@ -36,8 +36,8 @@ const NavBar = () => {
           </Link>
         </li>
         <li>
-          <Link href="/buys" className="text-white hover:text-gray-400">
-            Compras
+          <Link href="/buys" className="text-white hover:text-gray-400 ">
+            Añadir Stock
           </Link>
         </li>
         <li className="relative">

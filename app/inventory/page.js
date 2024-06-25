@@ -6,6 +6,7 @@ import { faPlus, faEdit, faTrash, faSearch, faFilePdf } from '@fortawesome/free-
 
 export default function InventoryPage() {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [productCode, setProductCode] = useState('');
   const [productName, setProductName] = useState('');
   const [stock, setStock] = useState('');
@@ -19,7 +20,11 @@ export default function InventoryPage() {
   useEffect(() => {
     fetch('/api/inventory')
       .then((res) => res.json())
-      .then((data) => setProducts(data.data));
+      .then((data) => setProducts(data.data || []));
+
+    fetch('/api/categories')
+      .then((res) => res.json())
+      .then((data) => setCategories(data.data || []));
   }, []);
 
   const handleSubmit = async (e) => {
@@ -108,7 +113,6 @@ export default function InventoryPage() {
     product.costPerUnit?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.totalCost?.toString().toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
@@ -129,13 +133,16 @@ export default function InventoryPage() {
             placeholder="Nombre del Producto"
             className="w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500"
           />
-          <input
-            type="text"
+          <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            placeholder="Categoría"
             className="w-full p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500"
-          /> 
+          >
+            <option value="" disabled>Seleccione una Categoría</option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id}>{cat.name}</option>
+            ))}
+          </select>
         </div>
         <div className="flex items-center space-x-2">
           <input
@@ -203,7 +210,7 @@ export default function InventoryPage() {
             <tr key={product._id} className="border-b border-gray-700">
               <td className="py-3 px-4 text-gray-300">{product.productCode}</td>
               <td className="py-3 px-4 text-gray-300">{product.productName}</td>
-              <td className="py-3 px-4 text-gray-300">{product.category}</td>
+              <td className="py-3 px-4 text-gray-300">{categories.find(cat => cat._id === product.category)?.name || 'Sin categoría'}</td>
               <td className="py-3 px-4 text-gray-300">{product.stock}</td>
               <td className="py-3 px-4 text-gray-300">{new Date(product.entryDate).toLocaleDateString()}</td>
               <td className="py-3 px-4 text-gray-300">{product.costPerUnit}</td>
@@ -239,6 +246,7 @@ export default function InventoryPage() {
               onChange={(e) => setEditingProduct({ ...editingProduct, productCode: e.target.value })}
               placeholder="Código de Producto"
               className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg mb-4 focus:outline-none focus:border-blue-500"
+              disabled
             />
             <input
               type="text"
@@ -247,13 +255,16 @@ export default function InventoryPage() {
               placeholder="Nombre del Producto"
               className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg mb-4 focus:outline-none focus:border-blue-500"
             />
-            <input
-              type="text"
+            <select
               value={editingProduct?.category || ''}
               onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
-              placeholder="Categoría"
               className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg mb-4 focus:outline-none focus:border-blue-500"
-            />
+            >
+              <option value="" disabled>Seleccione una Categoría</option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>{cat.name}</option>
+              ))}
+            </select>
             <input
               type="number"
               value={editingProduct?.stock || ''}

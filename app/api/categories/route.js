@@ -8,7 +8,7 @@ import logger from '../../middleware';
 export async function GET(req) {
   await dbConnect();
   try {
-    const categories = await Category.find({}).populate('products');
+    const categories = await Category.find({});
     return NextResponse.json({ success: true, data: categories });
   } catch (error) {
     return NextResponse.json({ success: false }, { status: 400 });
